@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: DP-Track
+  
+  profiles:
+    active: dev
+
+          
