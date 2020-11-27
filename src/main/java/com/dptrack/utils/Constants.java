@@ -36,4 +36,7 @@ public class Constants {
 	public static final String EXCEPTIONS = "Exception Occured";
 	public static final String EXIST = "User Already Exist";
 	public static final String FIELD_MISSING = "Field Missing";
+	public static final String INVALID_EMAIL= "Invalid Email";
+//	public static final String VERIFY_EMAIL = "Account not Verified";
+	public static final String VERIFY_ACCOUNT = "Account not Verified";
 }

@@ -2,6 +2,8 @@ package com.dptrack.model;
 
 
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,9 @@ import javax.persistence.Id;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -26,6 +31,8 @@ public class User {
 	@GeneratedValue
 	@JsonIgnore
 	private long id;
+	
+	
 	@Column(unique = true)
 	private String userId;
 	
@@ -41,7 +48,17 @@ public class User {
 	private String path;
 	@JsonIgnore
 	private String emailVerifCode;
+	
+	private boolean isVerified;
+	
 	@JsonIgnore
 	private String resetCode;
+	
+	@CreationTimestamp
+	private Timestamp created;
+	
+	@UpdateTimestamp
+	private Timestamp updated;
+	
 	private boolean status;
 }

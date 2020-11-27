@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dptrack.dtos.Login;
+import com.dptrack.dtos.UserDto;
+import com.dptrack.dtos.VerifyEmail;
+import com.dptrack.exceptions.InvalidCredentialException;
 import com.dptrack.model.User;
 import com.dptrack.service.UserService;
 import com.dptrack.utils.DPTrackResponse;
@@ -48,7 +51,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/register")
-	public DPTrackResponse<Object> register(@RequestBody User user) {
+	public DPTrackResponse<Object> register(@RequestBody UserDto user) {
 		return service.createNew(user);
 	}
 	
@@ -76,5 +79,10 @@ public class UserController {
 	@PutMapping("/{id}")
 	public DPTrackResponse<Object> updateUser(@RequestBody User user, @PathVariable String id) {
 		return service.updateUser(user,id);
+	}
+	
+	@PostMapping("/verify")
+	public DPTrackResponse<Object> validateOtp(VerifyEmail vemail) throws InvalidCredentialException{
+		return service.verifyOtp(vemail);
 	}
 }
