@@ -39,4 +39,5 @@ public class Constants {
 	public static final String INVALID_EMAIL= "Invalid Email";
 //	public static final String VERIFY_EMAIL = "Account not Verified";
 	public static final String VERIFY_ACCOUNT = "Account not Verified";
+	public static final String OTP_SENT = "Otp send successfully";
 }

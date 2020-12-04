@@ -3,6 +3,6 @@ spring:
     name: DP-Track
   
   profiles:
-    active: dev
+    active: prod
 
           

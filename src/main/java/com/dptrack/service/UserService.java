@@ -5,8 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dptrack.dtos.Login;
 import com.dptrack.dtos.UserDto;
 import com.dptrack.dtos.VerifyEmail;
-import com.dptrack.exceptions.InvalidCredentialException;
-import com.dptrack.model.User;
 import com.dptrack.utils.DPTrackResponse;
 
 public interface UserService {
@@ -19,8 +17,10 @@ public interface UserService {
 
 	public DPTrackResponse<Object> uploadPic(String id, MultipartFile file);
 
-	public DPTrackResponse<Object> updateUser(User user, String id);
+	public DPTrackResponse<Object> updateUser(UserDto user, String id);
 
-	public DPTrackResponse<Object> verifyOtp(VerifyEmail vemail) throws InvalidCredentialException;
+	public DPTrackResponse<Object> verifyOtp(VerifyEmail vemail);
+
+	public DPTrackResponse<Object> sendOtp(String email);
 
 }

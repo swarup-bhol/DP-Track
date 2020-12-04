@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import javax.mail.MessagingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,12 +94,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				if (check) {
 
 					if (!existuingUser.isVerified()) {
-						String code = cs.generateCode();
-						emailService.sentMail(user.getEmail(), code, "DpTrack",
-								"Your DpTrack otp for verifying email is :");
-						existuingUser.setEmailVerifCode(code);
-						userDao.save(existuingUser);
-						response = new DPTrackResponse<>(200, true, Constants.VERIFY_ACCOUNT, true);
+						response = new DPTrackResponse<>(200, true, Constants.VERIFY_ACCOUNT, existuingUser);
 					} else {
 						JwtToken token = JwtToken.builder().userId(existuingUser.getUserId())
 								.token(jwtToken.generateToken(existuingUser)).build();
@@ -184,13 +178,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public DPTrackResponse<Object> updateUser(User user, String id) {
+	public DPTrackResponse<Object> updateUser(UserDto user, String id) {
 		DPTrackResponse<Object> response = null;
 		try {
 			User findUser = userDao.findByUserId(id);
 			if (user == null)
 				response = new DPTrackResponse<>(404, false, HttpStatus.NOT_FOUND.name(), id);
-			findUser.setFullName(user.getFullName());
+			findUser.setFullName(user.getName());
 			response = new DPTrackResponse<>(200, true, Constants.OK, userDao.save(findUser));
 		} catch (Exception e) {
 			log.error("Exception :updateUser", e.getMessage());
@@ -200,9 +194,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public DPTrackResponse<Object> verifyOtp(VerifyEmail vemail) throws InvalidCredentialException {
-		DPTrackResponse<Object> response = null;
+	public DPTrackResponse<Object> verifyOtp(VerifyEmail vemail) {
+ 		DPTrackResponse<Object> response = null;
 		try {
+
 			if (vemail.getEmail() == null || vemail.getOtp() == null) {
 				throw new InvalidCredentialException("Invalid Credentials");
 			}
@@ -211,12 +206,52 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				throw new UserNotFound("Email not found");
 
 			if (user.getEmailVerifCode().equals(vemail.getOtp())) {
+				user.setVerified(true);
+				userDao.save(user);
 				response = new DPTrackResponse<>(200, true, HttpStatus.OK.name(), jwtToken.generateToken(user));
 			} else {
 				response = new DPTrackResponse<>(400, false, HttpStatus.BAD_REQUEST.name(), vemail);
 			}
-		} catch (Exception e) {
+		} catch (InvalidCredentialException e) {
+			log.error("InvalidCredentialException :verifyOtp", e.getMessage());
+			return new DPTrackResponse<>(409, false, Constants.FIELD_MISSING, vemail);
+		} catch (IllegalArgumentException e) {
+			log.error("Exception :verifyOtp", e.getMessage());
+			return new DPTrackResponse<>(409, false, Constants.FIELD_MISSING, vemail);
+		}catch (UserNotFound e) {
+			log.error("User Not found exception :verifyOtp", e.getMessage());
+			return new DPTrackResponse<>(409, false, Constants.USER_NOT_FOUND, vemail);
+		}
+		catch (Exception e) {
+			log.error("Exception :verifyOtp", e.getMessage());
 			response = new DPTrackResponse<>(500, false, HttpStatus.INTERNAL_SERVER_ERROR.name(), vemail);
+		}
+		return response;
+	}
+
+	@Override
+	public DPTrackResponse<Object> sendOtp(String email) {
+		DPTrackResponse<Object> response = null;
+		try {
+			User user = userDao.findByEmail(email);
+			if (user == null)
+				throw new UserNotFound(Constants.USER_NOT_FOUND);
+			String code = cs.generateCode();
+			boolean sentMail = emailService.sentMail(user.getEmail(), code, "DpTrack",
+					"Your DpTrack otp for verifying email is :");
+			if (sentMail) {
+				user.setEmailVerifCode(code);
+				response = new DPTrackResponse<>(200, true, Constants.OTP_SENT, userDao.save(user));
+			} else {
+				response = new DPTrackResponse<>(400, true, HttpStatus.BAD_REQUEST.name(), user);
+			}
+		} catch (IllegalArgumentException e) {
+			log.error("Illegal args exceptions: sendOtp");
+		} catch (EmailNotSentException e) {
+			log.error("Inavalid Email :sendOtp", e.getMessage());
+			return new DPTrackResponse<>(400, false, Constants.INVALID_EMAIL, email);
+		} catch (Exception e) {
+			log.error("Exception : sendOtp");
 		}
 		return response;
 	}

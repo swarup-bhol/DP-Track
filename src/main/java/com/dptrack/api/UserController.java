@@ -16,7 +16,6 @@ import com.dptrack.dtos.Login;
 import com.dptrack.dtos.UserDto;
 import com.dptrack.dtos.VerifyEmail;
 import com.dptrack.exceptions.InvalidCredentialException;
-import com.dptrack.model.User;
 import com.dptrack.service.UserService;
 import com.dptrack.utils.DPTrackResponse;
 
@@ -77,12 +76,29 @@ public class UserController {
 	 * @return
 	 */
 	@PutMapping("/{id}")
-	public DPTrackResponse<Object> updateUser(@RequestBody User user, @PathVariable String id) {
+	public DPTrackResponse<Object> updateUser(@RequestBody UserDto user, @PathVariable String id) {
 		return service.updateUser(user,id);
 	}
-	
-	@PostMapping("/verify")
-	public DPTrackResponse<Object> validateOtp(VerifyEmail vemail) throws InvalidCredentialException{
+	/**
+	 * @author swarup-bhol
+	 * 
+	 * @param vemail
+	 * @return
+	 * @throws InvalidCredentialException
+	 */
+	@PutMapping("/verify")
+	public DPTrackResponse<Object> validateOtp(@RequestBody VerifyEmail vemail){
 		return service.verifyOtp(vemail);
+	}
+	
+	/**
+	 * @author swarup-bhol
+	 * 
+	 * @param email
+	 * @return
+	 */
+	@PutMapping("/resend/{email}")
+	public DPTrackResponse<Object> resendOtp(@PathVariable String email){
+		return service.sendOtp(email);
 	}
 }

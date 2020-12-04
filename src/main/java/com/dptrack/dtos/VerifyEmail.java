@@ -1,14 +1,23 @@
 package com.dptrack.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Builder @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class VerifyEmail {
 	private String email;
-	private String mobile;
 	private String otp;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+
 }

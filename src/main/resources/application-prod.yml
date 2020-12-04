@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 5000
 management:
   server:
     port: 9300
@@ -7,9 +7,9 @@ management:
 spring:
 ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)  
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/test?createDatabaseIfNotExist=true
-    username: root
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://dptrackdb.clrfmtnhaboz.us-east-1.rds.amazonaws.com:3306/dptrack?createDatabaseIfNotExist=true
+    username: dptrack
     password: password
   jpa:          
     properties:

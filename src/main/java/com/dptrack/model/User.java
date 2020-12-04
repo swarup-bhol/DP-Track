@@ -46,6 +46,7 @@ public class User {
 	private String password;
 	@JsonIgnore
 	private String path;
+	
 	@JsonIgnore
 	private String emailVerifCode;
 	
